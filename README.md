@@ -1,4 +1,7 @@
 # laravel-segitseg
 
-Fast Modeling
+Fast Modeling 
+```
 php artisan make:model Blog -c -f -m -s -r
+```
+
