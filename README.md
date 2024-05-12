@@ -27,5 +27,18 @@ public function update(BookRequest $request, Book $book): RedirectResponse
         // visszairányítás
         return redirect()->route('admin.books.index')->with('success', 'Sikeres mentés');
     }
+
+
+
+public function destroy(Book $book)//: RedirectResponse
+    {
+        if ($book->image_url) {
+            Storage::disk('images')->delete($book->image_url);
+        }
+
+        $book->delete();
+
+        return redirect()->route('admin.books.index')->with('success', 'Sikeres törlés');
+    }
 ```
 
