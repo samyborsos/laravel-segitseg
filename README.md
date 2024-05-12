@@ -42,3 +42,11 @@ public function destroy(Book $book)//: RedirectResponse
     }
 ```
 
+Rescrict for user only showing own profile and own stuff
+
+```
+Gate::define('edit-user', function (User $user, User $profileUser) {
+            return $user->id === $profileUser->id;
+        });
+```
+
