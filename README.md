@@ -7,25 +7,36 @@ php artisan make:model Blog -c -f -m -s -r
 
 Kép feltöltése, rátöltése és törlése
 ```
-public function update(BookRequest $request, Book $book): RedirectResponse
+public function update(Todo $todo)
     {
-        $validated = $this->getValidated($request);
+        $validated = request()->validate([
+            'title' => ['required', 'string', 'max:255'], // Title must be required, string, and under 255 characters
+            'deadline' => ['required', 'date', 'after:today'], // Deadline must be required, a date, and after today
+            'done' => ['required', 'boolean'], // Done flag must be required and a boolean value
+            'category' => ['required', 'string', 'in:alacsony,közepes,magas'], // Category must be required, string, and one of the specified options
+            'image_url' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // Existing image validation
 
-        if ($request->has('image')) {
-            if ($book->image_url) {
-                Storage::disk('images')->delete($book->image_url);
+        ]);
+
+        //replace image
+        if (request()->has('image')) {
+            if ($todo->image_url) {
+                Storage::disk('images')->delete($todo->image_url);
             }
         }
-
-        if (isset($validated['delete-image'])) {
-            Storage::disk('images')->delete($book->image_url);
-            $validated['image_url'] = null;
+        if (isset($validated['image_url'])) {
+            $validated['image_url'] = request('image_url')->store('images', 'public');
+            Storage::disk('public')->delete($todo->image_url);
         }
 
-        $book->update($validated);
+        //if done checked, update done_at
+        if($validated['done'] === true) {
+            $validated['done_at'] = time();
+        }
 
-        // visszairányítás
-        return redirect()->route('admin.books.index')->with('success', 'Sikeres mentés');
+        $todo->update($validated);
+
+        return redirect('/todos/' .  $todo->id)->with('success', 'todo edited successfully!');
     }
 ```
 Képek előkészítése
