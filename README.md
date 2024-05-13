@@ -42,8 +42,11 @@ public function update(Todo $todo)
 Képek előkészítése
 ```
 create 'images' folder in storage/app/public/images
+
 php artisan storage:link
+
 Kép mutatásához ---> <img src="{{ str_starts_with($todo->image_url, 'http') ? $todo->image_url : '/storage/' . $todo->image_url}}" alt="{{$todo->title}}" style="width: 100px">
+
 ```
 ```
 
