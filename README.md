@@ -21,7 +21,7 @@ public function update(Todo $todo)
         //replace image
         if (request()->has('image')) {
             if ($todo->image_url) {
-                Storage::disk('images')->delete($todo->image_url);
+                Storage::disk('public')->delete($todo->image_url);
             }
         }
         if (isset($validated['image_url'])) {
@@ -51,7 +51,7 @@ Kép mutatásához ---> <img src="{{ str_starts_with($todo->image_url, 'http') ?
 public function destroy(Book $book)//: RedirectResponse
     {
         if ($book->image_url) {
-            Storage::disk('images')->delete($book->image_url);
+            Storage::disk('public')->delete($book->image_url);
         }
 
         $book->delete();
