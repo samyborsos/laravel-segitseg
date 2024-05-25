@@ -1,5 +1,60 @@
 # laravel-segitseg
 
+## Api
+### php artisan install:api
+Create Api folder in Controllers and paste this in it:
+```
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Models\Activity;
+use Illuminate\Http\Request;
+
+class ActivityController extends Controller
+{
+    public function index()
+    {
+        $activities = Activity::all();
+        return response()->json($activities);
+    }
+
+    public function show($id)
+    {
+        $activity = Activity::findOrFail($id);
+        return response()->json($activity);
+    }
+
+    public function search(Request $request)
+    {
+        // Implement search logic based on request parameters
+    }
+}
+```
+
+After that create the roures in the api.php file:
+```
+<?php
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ActivityController;
+
+Route::get('/user', function (Request $request) {
+    return $request->user();
+})->middleware('auth:sanctum');
+
+Route::get('/activities', 'App\Http\Controllers\Api\ActivityController@index');
+Route::get('/activities/{id}', 'App\Http\Controllers\Api\ActivityController@show');
+
+//You can use this too if you want
+//Route::apiResource('activities', ActivityController::class);
+
+```
+
+
+
 Fast Modeling 
 ```
 php artisan make:model Blog -c -f -m -s -r
