@@ -138,6 +138,7 @@ public function update(Todo $todo)
     }
 
 ```
+```
 public function destroy(Book $book)//: RedirectResponse
     {
         if ($book->image_url) {
