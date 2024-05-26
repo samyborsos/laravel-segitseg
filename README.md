@@ -16,13 +16,13 @@ class ActivityController extends Controller
 {
     public function index()
     {
-        $activities = Activity::all();
+        $activities = Activity::with('category')->get();
         return response()->json($activities);
     }
 
     public function show($id)
     {
-        $activity = Activity::findOrFail($id);
+        $activity = Activity::with('category')->findOrFail($id);
         return response()->json($activity);
     }
 
