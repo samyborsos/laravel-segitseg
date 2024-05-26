@@ -62,6 +62,49 @@ php artisan make:model Blog -c -f -m -s -r
 
 Kép feltöltése, rátöltése és törlése
 ```
+public function store()
+    {
+        request()->validate([
+            'title' => ['required'],
+            'description' => ['required'],
+            'content' => ['required'],
+            'image_url' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
+
+        ]);
+
+
+        Blog::create([
+            'author_id' => Auth::user()->id,
+            'title' => request('title'),
+            'description' => request('description'),
+            'content' => request('content'),
+            'image_url' => request('image_url')->store('images', 'public') // Store in public/images
+        ]);
+
+        return redirect('/blogs')->with('success', 'Blog created successfully!');
+    }
+```
+```
+public function update(Blog $blog)
+    {
+        $validated = request()->validate([
+            'title' => ['required'],
+            'description' => ['required'],
+            'content' => ['required'],
+            'image_url' => 'image|mimes:jpeg,png,jpg,gif|max:2048'
+        ]);
+
+        $validated['author_id'] = Auth::user()->id;
+        $validated['image_url'] = request('image_url')->store('images', 'public'); // Store in public/images
+
+        Storage::disk('public')->delete($blog->image_url);
+
+        $blog->update($validated);
+
+        return redirect('/blogs/' .  $blog->id )->with('success', 'Blog edited successfully"!');
+    }
+```
+```
 public function update(Todo $todo)
     {
         $validated = request()->validate([
@@ -93,19 +136,8 @@ public function update(Todo $todo)
 
         return redirect('/todos/' .  $todo->id)->with('success', 'todo edited successfully!');
     }
-```
-Képek előkészítése
-```
-create 'images' folder in storage/app/public/images
-
-php artisan storage:link
-
-Kép mutatásához ---> <img src="{{ str_starts_with($todo->image_url, 'http') ? $todo->image_url : '/storage/' . $todo->image_url}}" alt="{{$todo->title}}" style="width: 100px">
 
 ```
-```
-
-
 public function destroy(Book $book)//: RedirectResponse
     {
         if ($book->image_url) {
@@ -116,7 +148,18 @@ public function destroy(Book $book)//: RedirectResponse
 
         return redirect()->route('admin.books.index')->with('success', 'Sikeres törlés');
     }
+
 ```
+Képek előkészítése
+```
+create 'images' folder in storage/app/public/images
+
+php artisan storage:link
+
+Kép mutatásához ---> <img src="{{ str_starts_with($todo->image_url, 'http') ? $todo->image_url : '/storage/' . $todo->image_url}}" alt="{{$todo->title}}" style="width: 100px">
+
+```
+
 
 Rescrict for user only showing own profile and own stuff
 
