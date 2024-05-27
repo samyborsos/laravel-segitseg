@@ -9,6 +9,46 @@ Create Api folder in Controllers and paste this in it:
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Models\Category;
+
+class CategoryController extends Controller
+{
+    public function index()
+    {
+        $categories = Category::all();
+        return response()->json($categories);
+    }
+
+
+    public function show($id)
+    {
+        $category = Category::findOrFail($id);
+        return response()->json($category);
+    }
+
+
+    public function random()
+    {
+        $categories = Category::inRandomOrder()->first();
+        return response()->json($categories);
+    }
+
+    public function randomActivity($id)
+    {
+        $activity = Category::findOrFail($id)->activities->random();
+        return response()->json($activity);
+    }
+    
+}
+
+```
+```
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
 use App\Models\Activity;
 use Illuminate\Http\Request;
 
@@ -19,6 +59,7 @@ class ActivityController extends Controller
         $activities = Activity::with('category')->get();
         return response()->json($activities);
     }
+
 
     public function show($id)
     {
@@ -47,6 +88,18 @@ class ActivityController extends Controller
 
         return response()->json($activities);
     }
+    public function random()
+    {
+        $activities = Activity::with('category')->inRandomOrder()->first();
+        return response()->json($activities);
+    }
+
+    public function randomActivity($id)
+    {
+        $activity = Category::findOrFail($id)->activities->random();
+        return response()->json($activity);
+    }
+
 }
 ```
 
@@ -64,7 +117,16 @@ Route::get('/user', function (Request $request) {
 
 Route::get('/activities', 'App\Http\Controllers\Api\ActivityController@index');
 Route::get('/activities/search', 'App\Http\Controllers\Api\ActivityController@search'); 
+Route::get('/activities/random', 'App\Http\Controllers\Api\ActivityController@random'); 
 Route::get('/activities/{activity}', 'App\Http\Controllers\Api\ActivityController@show');
+
+Route::get('/categories', 'App\Http\Controllers\Api\CategoryController@index');
+Route::get('/categories/search', 'App\Http\Controllers\Api\CategoryController@search'); 
+Route::get('/categories/random', 'App\Http\Controllers\Api\CategoryController@random'); 
+Route::get('/categories/{category}', 'App\Http\Controllers\Api\CategoryController@show');
+Route::get('/categories/{category}/random', 'App\Http\Controllers\Api\CategoryController@randomActivity');
+
+
 
 //Use the code above for custom functions
 //Use this if you only have index, show, store, and update (edit and  create won't work here)
