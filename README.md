@@ -28,7 +28,24 @@ class ActivityController extends Controller
 
     public function search(Request $request)
     {
-        // Implement search logic based on request parameters
+        $title = $request->get('title') ?? "";
+        /* $minCost = $request->get('minCost') ?? "";
+        $maxCost = $request->get('maxCost') ?? "";
+        $minPeople = $request->get('minPeople') ?? "";
+        $maxPeople = $request->get('maxPeople') ?? "";
+        $category_id = $request->get('category_id') ?? ""; */
+
+
+
+        $activities = Activity::with('category')
+        ->where('title', 'LIKE' , '%'.$title.'%')
+        /* ->whereBetween('cost', [$minCost, $maxCost])
+        ->whereBetween('people', [$minPeople, $maxPeople])
+        ->where('category_id', 'LIKE', $category_id) */
+        ->get();
+
+
+        return response()->json($activities);
     }
 }
 ```
@@ -46,9 +63,11 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::get('/activities', 'App\Http\Controllers\Api\ActivityController@index');
-Route::get('/activities/{id}', 'App\Http\Controllers\Api\ActivityController@show');
+Route::get('/activities/search', 'App\Http\Controllers\Api\ActivityController@search'); 
+Route::get('/activities/{activity}', 'App\Http\Controllers\Api\ActivityController@show');
 
-//You can use this too if you want
+//Use the code above for custom functions
+//Use this if you only have index, show, store, and update (edit and  create won't work here)
 //Route::apiResource('activities', ActivityController::class);
 
 ```
