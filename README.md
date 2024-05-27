@@ -29,19 +29,19 @@ class ActivityController extends Controller
     public function search(Request $request)
     {
         $title = $request->get('title') ?? "";
-        /* $minCost = $request->get('minCost') ?? "";
-        $maxCost = $request->get('maxCost') ?? "";
-        $minPeople = $request->get('minPeople') ?? "";
-        $maxPeople = $request->get('maxPeople') ?? "";
-        $category_id = $request->get('category_id') ?? ""; */
+        $minCost = $request->get('minCost') ?? 1;
+        $maxCost = $request->get('maxCost') ?? 100;
+        $minPeople = $request->get('minPeople') ?? 1;
+        $maxPeople = $request->get('maxPeople') ?? 10;
+        $category_id = $request->get('category_id') ?? "%";
 
 
 
         $activities = Activity::with('category')
         ->where('title', 'LIKE' , '%'.$title.'%')
-        /* ->whereBetween('cost', [$minCost, $maxCost])
+        ->whereBetween('cost', [$minCost, $maxCost])
         ->whereBetween('people', [$minPeople, $maxPeople])
-        ->where('category_id', 'LIKE', $category_id) */
+        ->where('category_id', 'LIKE', $category_id)
         ->get();
 
 
